@@ -13,21 +13,21 @@ const secretKey = process.env.SECRET_KEY;
  */
 class HelperUtils {
   /**
-           * @method generateToken
-           * @description Generate a token from a given payload
-           * @param {object} payload The user payload to tokenize
-           * @returns {string} JSON Web Token
-           */
+   * @method generateToken
+   * @description Generate a token from a given payload
+   * @param {object} payload The user payload to tokenize
+   * @returns {string} JSON Web Token
+   */
   static generateToken(payload) {
     return jwt.sign(payload, secretKey);
   }
 
   /**
-           * @method verifyToken
-           * @description Verifies a token and decodes it to its subsequent payload
-           * @param {string} token The token to decode
-           * @returns {object} The resulting payload
-           */
+   * @method verifyToken
+   * @description Verifies a token and decodes it to its subsequent payload
+   * @param {string} token The token to decode
+   * @returns {object} The resulting payload
+   */
   static verifyToken(token) {
     try {
       const payload = jwt.verify(token, secretKey);
@@ -38,11 +38,11 @@ class HelperUtils {
   }
 
   /**
-           * @method hashPassword
-           * @description Hashes a users password
-           * @param {string} password The users password
-           * @returns {string} The resulting hashed password
-           */
+   * @method hashPassword
+   * @description Hashes a users password
+   * @param {string} password The users password
+   * @returns {string} The resulting hashed password
+   */
   static hashPassword(password) {
     const hash = bcrypt.hashSync(password, 8);
     return hash;

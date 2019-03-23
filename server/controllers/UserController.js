@@ -1,4 +1,5 @@
 import models from '../database/models';
+import Helper from '../helpers/Helpers';
 
 const { User } = models;
 /**
@@ -16,12 +17,14 @@ class UserController {
   static async registerUser(req, res) {
     try {
       await User.create({ ...req.user });
-      delete req.user.password;
+      const userObject = req.user;
+      delete userObject.password;
+      const token = Helper.generateToken({ ...req.user });
       res
         .status(201)
         .json({
           message: 'User created successfully',
-          user: req.user
+          user: { ...userObject, token }
         });
     } catch (error) {
       res.status(500).json({ error: 'Server error' });
