@@ -6,7 +6,10 @@ module.exports = (sequelize, DataTypes) => {
     UserId: DataTypes.INTEGER
   }, {});
   Note.associate = (models) => {
-    Note.belongsTo(models.User);
+    Note.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
   return Note;
 };
