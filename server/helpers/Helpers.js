@@ -51,13 +51,13 @@ class HelperUtils {
   /**
    * @method comparePassword
    * @description Hashes a users password
-   * @param {string} passwordOrEmail The users password/email
+   * @param {string} password The users password
    * @param {string} hash The users hashed password/email
    * @returns {string} The resulting hashed password
    */
-  static comparePasswordOrEmail(passwordOrEmail, hash) {
-    const isPassword = bcrypt.compareSync(passwordOrEmail, hash);
-    return isPassword;
+  static verifyPassword(password, hash) {
+    const isPasswordCorrect = bcrypt.compareSync(password, hash);
+    return isPasswordCorrect;
   }
 }
 

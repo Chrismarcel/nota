@@ -58,13 +58,13 @@ class ValidateUser {
   }
 
   /**
-   * @method validateRegistration
+   * @method validateRegistrationDetails
    * @param {object} req - The request object
    * @param {object} res - The response object
    * @param {callback} next - Callback method
    * @returns {object} - response object
    */
-  static async validateUserDetails(req, res, next) {
+  static async validateRegistrationDetails(req, res, next) {
     const { username, email, password } = req.body;
     const errorFormatter = ({ msg }) => msg;
     const errorMessages = validationResult(req).formatWith(errorFormatter);
@@ -75,13 +75,47 @@ class ValidateUser {
       return res.status(400).json({ errors: errorMessages.mapped() });
     }
 
-    const uniqueUsers = await ValidateUser.isUserUnique(email, username);
-    if (uniqueUsers.length > 0) {
+    const foundUser = await ValidateUser.isUserUnique(email, username);
+    if (foundUser) {
       return res.status(409).json({ errors: 'Username or Email already exists' });
     }
 
     const { body } = req;
     req.user = { ...body, password: hashedPassword };
+    next();
+  }
+
+  /**
+ * @method validateLoginDetails
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ * @param {callback} next - Callback method
+ * @returns {object} - response object
+ */
+  static async validateLoginDetails(req, res, next) {
+    const { name, password } = req.body;
+    const errorFormatter = ({ msg }) => msg;
+    const errorMessages = validationResult(req).formatWith(errorFormatter);
+
+    const hashedPassword = Helpers.hashPassword(password);
+
+    if (!errorMessages.isEmpty()) {
+      return res.status(400).json({ errors: errorMessages.mapped() });
+    }
+
+    const isPasswordCorrect = Helpers.verifyPassword(password, hashedPassword);
+    const user = await User.findOne({
+      attributes: ['username', 'email'],
+      where: {
+        [Op.or]: [{ email: name }, { username: name }]
+      },
+      raw: true
+    });
+
+    if (!user || !isPasswordCorrect) {
+      return res.status(403).json({ error: 'Invalid email or password' });
+    }
+    req.user = user;
     next();
   }
 
@@ -93,15 +127,13 @@ class ValidateUser {
    * @returns {boolean} - If user detail is unique or not
    */
   static async isUserUnique(email, username) {
-    const user = await User.findAll({
+    const user = await User.findOne({
       attributes: ['email', 'username'],
       where: {
         [Op.or]: [{ email }, { username }]
       }
     });
-
-    const existingUserObject = await user;
-    return user.length > 0 ? Object.keys(existingUserObject[0]) : [];
+    return user;
   }
 }
 

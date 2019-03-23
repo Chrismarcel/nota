@@ -6,7 +6,12 @@ const router = express.Router();
 
 router.post('/users',
   ValidateUser.validateFields(false),
-  ValidateUser.validateUserDetails,
+  ValidateUser.validateRegistrationDetails,
   UserController.registerUser);
+
+router.post('/users/login',
+  ValidateUser.validateFields(true),
+  ValidateUser.validateLoginDetails,
+  UserController.loginUser);
 
 export default router;

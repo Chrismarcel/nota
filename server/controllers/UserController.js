@@ -19,7 +19,7 @@ class UserController {
       await User.create({ ...req.user });
       const userObject = req.user;
       delete userObject.password;
-      const token = Helper.generateToken({ ...req.user });
+      const token = Helper.generateToken({ ...userObject });
       res
         .status(201)
         .json({
@@ -29,6 +29,23 @@ class UserController {
     } catch (error) {
       res.status(500).json({ error: 'Server error' });
     }
+  }
+
+  /**
+   * @method loginUser
+   * @param {object} req - The request object
+   * @param {object} res - The response object
+   * @returns {object} - response object
+   */
+  static async loginUser(req, res) {
+    const userObject = req.user;
+    const token = Helper.generateToken({ ...userObject });
+    res
+      .status(200)
+      .json({
+        message: 'User logged in successfully',
+        user: { ...userObject, token }
+      });
   }
 }
 
