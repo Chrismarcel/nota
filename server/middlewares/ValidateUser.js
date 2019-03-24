@@ -48,7 +48,7 @@ class ValidateUser {
           checkFalsy: true,
           checkNull: true
         })
-        .withMessage('Username or email must be specifed'),
+        .withMessage('name field must be specifed with username of email as value'),
     ];
 
     if (isLogin) {
@@ -105,7 +105,7 @@ class ValidateUser {
 
     const isPasswordCorrect = Helpers.verifyPassword(password, hashedPassword);
     const user = await User.findOne({
-      attributes: ['username', 'email'],
+      attributes: ['id', 'username', 'email'],
       where: {
         [Op.or]: [{ email: name }, { username: name }]
       },
@@ -128,7 +128,7 @@ class ValidateUser {
    */
   static async isUserUnique(email, username) {
     const user = await User.findOne({
-      attributes: ['email', 'username'],
+      attributes: ['id', 'email', 'username'],
       where: {
         [Op.or]: [{ email }, { username }]
       }

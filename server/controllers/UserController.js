@@ -16,8 +16,9 @@ class UserController {
    */
   static async registerUser(req, res) {
     try {
-      await User.create({ ...req.user });
+      const user = await User.create({ ...req.user });
       const userObject = req.user;
+      userObject.id = user.dataValues.id;
       delete userObject.password;
       const token = Helper.generateToken({ ...userObject });
       res

@@ -1,5 +1,6 @@
 import express from 'express';
 import ValidateUser from '../middlewares/ValidateUser';
+import AuthenticateUser from '../middlewares/AuthenticateUser';
 import ValidateNote from '../middlewares/ValidateNote';
 import UserController from '../controllers/UserController';
 import NoteController from '../controllers/NoteController';
@@ -17,6 +18,7 @@ router.post('/users/login',
   UserController.loginUser);
 
 router.post('/notes',
+  AuthenticateUser.verifyUser,
   ValidateNote.validateFields(),
   ValidateNote.validateNote,
   NoteController.createNote);
