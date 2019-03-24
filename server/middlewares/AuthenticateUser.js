@@ -43,7 +43,6 @@ class AuthenticateUser {
      */
   static async verifyUser(req, res, next) {
     const payload = await AuthenticateUser.verifyAuthHeader(req);
-    console.log(payload);
     let error;
 
     if (payload.error === 'auth') {
