@@ -23,4 +23,8 @@ router.post('/notes',
   ValidateNote.validateNote,
   NoteController.createNote);
 
+router.get('/notes',
+  AuthenticateUser.verifyUser,
+  NoteController.getNotes);
+
 export default router;

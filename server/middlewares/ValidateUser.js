@@ -130,7 +130,8 @@ class ValidateUser {
     const user = await User.findOne({
       attributes: ['id', 'email', 'username'],
       where: {
-        [Op.or]: [{ email }, { username }]
+        [Op.or]: [{ email }, { username }],
+        raw: true
       }
     });
     return user;
