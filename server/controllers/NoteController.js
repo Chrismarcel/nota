@@ -54,6 +54,22 @@ class NoteController {
       res.status(500).json({ error: 'Server error' });
     }
   }
+
+  /**
+   * @method getSingleNote
+   * @param {object} req - The request object
+   * @param {object} res - The response object
+   * @returns {object} - response object
+   */
+  static async getSingleNote(req, res) {
+    const { note } = req;
+    res
+      .status(200)
+      .json({
+        message: 'Note fetched successfully',
+        note
+      });
+  }
 }
 
 export default NoteController;
