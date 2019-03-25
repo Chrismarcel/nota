@@ -12,25 +12,28 @@ class ValidateNote {
    * @method validateFields
    * @description - Validates note fields
    * @param {boolean} isSingleArticle - Single article
+   * @param {boolean} requestBodyPresent - Single article
    * @returns {array} - Express Validator middlewares
    */
-  static validateFields(isSingleArticle = true) {
+  static validateFields(isSingleArticle, requestBodyPresent = false) {
+    const fieldsToValidate = [];
     if (isSingleArticle) {
-      return [
-        check('id')
-          .exists()
-          .withMessage('Note id must be specified')
-          .isNumeric()
-          .withMessage('Note id can only be numeric')
-      ];
+      fieldsToValidate.push(check('id')
+        .exists()
+        .withMessage('Note id must be specified')
+        .isNumeric()
+        .withMessage('Note id can only be numeric'));
     }
-    return [
-      check('title')
+
+    if (requestBodyPresent) {
+      fieldsToValidate.push(check('title')
         .exists()
         .withMessage('Note title must be specified')
         .isLength({ min: 3 })
-        .withMessage('Title must be up to 3 characters or above')
-    ];
+        .withMessage('Title must be up to 3 characters or above'));
+    }
+
+    return fieldsToValidate;
   }
 
   /**
@@ -77,11 +80,10 @@ class ValidateNote {
       });
       if (!note) {
         res
-          .status(404)
-          .json({
-            message: 'Note not found',
-            note
-          });
+          .status(404).json({ error: 'Note not found' });
+      }
+      if (note.userId !== req.user.id) {
+        res.status(403).json({ error: 'You cannot access this document' });
       }
       req.note = note;
       next();

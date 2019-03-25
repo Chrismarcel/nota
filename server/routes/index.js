@@ -19,7 +19,7 @@ router.post('/users/login',
 
 router.post('/notes',
   AuthenticateUser.verifyUser,
-  ValidateNote.validateFields(),
+  ValidateNote.validateFields(false, true),
   ValidateNote.validateNoteFields,
   NoteController.createNote);
 
@@ -32,5 +32,11 @@ router.get('/notes/:id',
   ValidateNote.validateFields(true),
   ValidateNote.validateSingleNote,
   NoteController.getSingleNote);
+
+router.put('/notes/:id',
+  AuthenticateUser.verifyUser,
+  ValidateNote.validateFields(true, true),
+  ValidateNote.validateSingleNote,
+  NoteController.updateNote);
 
 export default router;

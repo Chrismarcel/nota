@@ -70,6 +70,29 @@ class NoteController {
         note
       });
   }
+
+  /**
+   * @method updateNote
+   * @param {object} req - The request object
+   * @param {object} res - The response object
+   * @returns {object} - response object
+   */
+  static async updateNote(req, res) {
+    const { id } = req.note;
+    const updatedNote = await Note.update(req.note, {
+      where: {
+        id
+      },
+      returning: true,
+      raw: true
+    });
+    res
+      .status(200)
+      .json({
+        message: 'Note updated successfully',
+        note: updatedNote[1][0]
+      });
+  }
 }
 
 export default NoteController;
