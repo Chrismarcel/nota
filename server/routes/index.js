@@ -39,4 +39,10 @@ router.put('/notes/:id',
   ValidateNote.validateSingleNote,
   NoteController.updateNote);
 
+router.delete('/notes/:id',
+  AuthenticateUser.verifyUser,
+  ValidateNote.validateFields(true, false),
+  ValidateNote.validateSingleNote,
+  NoteController.deleteNote);
+
 export default router;

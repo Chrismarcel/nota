@@ -79,19 +79,47 @@ class NoteController {
    */
   static async updateNote(req, res) {
     const { id } = req.note;
-    const updatedNote = await Note.update(req.note, {
-      where: {
-        id
-      },
-      returning: true,
-      raw: true
-    });
-    res
-      .status(200)
-      .json({
-        message: 'Note updated successfully',
-        note: updatedNote[1][0]
+    try {
+      const updatedNote = await Note.update(req.note, {
+        where: {
+          id
+        },
+        returning: true,
+        raw: true
       });
+      res
+        .status(200)
+        .json({
+          message: 'Note updated successfully',
+          note: updatedNote[1][0]
+        });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  /**
+   * @method deleteNote
+   * @param {object} req - The request object
+   * @param {object} res - The response object
+   * @returns {object} - response object
+   */
+  static async deleteNote(req, res) {
+    const { id } = req.note;
+    try {
+      await Note.destroy({
+        where: {
+          id
+        }
+      });
+      res
+        .status(200)
+        .json({
+          message: 'Note deleted successfully'
+        });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
   }
 }
 
