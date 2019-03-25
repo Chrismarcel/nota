@@ -74,12 +74,15 @@ class ValidateUser {
     if (!errorMessages.isEmpty()) {
       return res.status(400).json({ errors: errorMessages.mapped() });
     }
+    const userObj = await ValidateUser.isUserUnique(email, username);
 
-    const foundUser = await ValidateUser.isUserUnique(email, username);
-    if (foundUser) {
-      return res.status(409).json({ errors: 'Username or Email already exists' });
+    if (userObj.length > 0) {
+      const errors = {};
+      userObj.forEach((field) => {
+        errors[field] = `${field} already exists.`;
+      });
+      return res.status(409).json({ errors });
     }
-
     const { body } = req;
     req.user = { ...body, password: hashedPassword };
     next();
@@ -127,14 +130,24 @@ class ValidateUser {
    * @returns {boolean} - If user detail is unique or not
    */
   static async isUserUnique(email, username) {
-    const user = await User.findOne({
-      attributes: ['id', 'email', 'username'],
+    const matchedFields = [];
+    const userObj = await User.findOne({
+      attributes: ['email', 'username'],
       where: {
         [Op.or]: [{ email }, { username }]
       },
       raw: true
     });
-    return user;
+
+    if (userObj && userObj.email === email) {
+      matchedFields.push('email');
+    }
+
+    if (userObj && userObj.username === username) {
+      matchedFields.push('username');
+    }
+
+    return matchedFields;
   }
 }
 
